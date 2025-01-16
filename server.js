@@ -23,23 +23,11 @@ app.use("/static", express.static(path.join(__dirname, "public")));
 // CORS configuration
 app.use(
   cors({
-    origin: (origin, callback) => {
-      // Define allowed origins
-      const allowedOrigins = ['https://frontend2.onrender.com', 'http://localhost:3000'];
-
-      // Allow requests with no origin (like mobile apps or Postman)
-      if (!origin || allowedOrigins.includes(origin)) {
-        return callback(null, true); // Allow the request
-      }
-
-      // If the origin is not allowed, return an error
-      return callback(new Error('Not allowed by CORS'));
-    },
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed methods
-    allowedHeaders: ['Content-Type', 'Authorization'], // Specify allowed headers
-    credentials: true, // Enable credentials (e.g., cookies, authorization headers)
+    origin: 'https://forntend2.onrender.com', // Replace with your frontend URL
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   })
-);
+); 
 
 
 
