@@ -2,6 +2,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const path = require("path");
+
+// Import your routes
 const authRoutes = require('./routes/auth');
 const profileRoutes = require('./routes/profile');
 const quizRoutes = require('./routes/quiz');
@@ -10,8 +13,8 @@ const trackProgressRoutes = require("./routes/trackProgress");
 const questionRoutes = require("./routes/questions");
 const leaderboardRoutes = require("./routes/leaderboard");
 const downloadRoutes = require("./routes/downloadRoutes");
+
 const app = express();
-const path = require("path");
 
 // Load environment variables
 dotenv.config();
@@ -19,7 +22,9 @@ dotenv.config();
 // Middleware to parse JSON
 app.use(express.json());
 
-app.use("/static", express.static(path.join(__dirname, "public")));
+// Serve static files from "public" directory
+app.use("/static", express.static(path.join(__dirname, "public")));  // Your "public" directory
+
 // CORS configuration
 app.use(
   cors({
@@ -28,8 +33,6 @@ app.use(
     allowedHeaders: ['Content-Type', 'Authorization'],
   })
 ); 
-
-
 
 // Connect to MongoDB
 mongoose
@@ -40,7 +43,7 @@ mongoose
     process.exit(1); // Exit the app if MongoDB connection fails
   });
 
-// Routes
+// API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/quiz', quizRoutes);
@@ -50,7 +53,15 @@ app.use("/api/questions", questionRoutes);
 app.use("/api/leaderboard", leaderboardRoutes);
 app.use("/downloads", downloadRoutes);
 
-// Default route for undefined routes
+// Serve static files from React app (build folder)
+app.use(express.static(path.join(__dirname, 'build')));
+
+// Catch-all route to serve the React app for any route that isn't API-related
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
+
+// Default route for undefined API routes
 app.use((req, res) => {
   res.status(404).json({ message: 'Route not found' });
 });
@@ -63,6 +74,6 @@ app.use((err, req, res, next) => {
 
 // Start the server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT,() => {
+app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
